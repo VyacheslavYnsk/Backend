@@ -21,7 +21,7 @@ jobs:
           java-version: '17'
 
       - name: Run OWASP Dependency-Check
-        uses: jeremylong/DependencyCheck@v2
+        uses: jeremylong/DependencyCheck@v1
         with:
           scan: './'
           format: 'HTML'
