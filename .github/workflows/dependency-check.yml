@@ -21,14 +21,14 @@ jobs:
           java-version: '17'
 
       - name: Run OWASP Dependency-Check
-        uses: jeremylong/DependencyCheck@v1
+        uses: dependency-check/owasp-dependency-check-action@v2
         with:
           scan: './'
           format: 'HTML'
           outputDirectory: './dependency-check-report'
 
       - name: Upload Dependency-Check report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: dependency-check-report
           path: dependency-check-report/
@@ -36,7 +36,11 @@ jobs:
       - name: SonarQube Scan
         uses: sonarsource/sonarcloud-github-action@v1
         with:
+          # ВАЖНО: замените на ваш SonarQube/SonarCloud токен в секретах репозитория
           token: ${{ secrets.SONAR_TOKEN }}
+          # Ключ проекта SonarQube (замените на свой)
           projectKey: your-project-key
+          # Название организации (если используете SonarCloud)
           organization: your-organization
-          # extraArgs: '-Dsonar.host.url=https://your-sonarqube-server.com' # если нужно
+          # Дополнительные параметры (если нужны)
+          # sonar.sources: '.'
