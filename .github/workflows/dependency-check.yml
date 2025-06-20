@@ -20,14 +20,21 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Run OWASP Dependency-Check
-        uses: SteveSpringett/dependency-check-action@v5  # Используем альтернативное действие
-        with:
-          project: "your-project-name"  # Замените на имя вашего проекта
-          scan: "./"
-          format: "HTML"
-          output: "./dependency-check-report"
-
+      # Устанавливаем OWASP Dependency-Check через CLI
+      - name: Download and run OWASP Dependency-Check
+        run: |
+          # Скачиваем и распаковываем Dependency-Check
+          curl -sLO https://github.com/jeremylong/DependencyCheck/releases/download/v9.0.10/dependency-check-9.0.10-release.zip
+          unzip dependency-check-9.0.10-release.zip
+          chmod +x ./dependency-check/bin/dependency-check.sh
+          
+          # Запускаем сканирование
+          ./dependency-check/bin/dependency-check.sh \
+            --project "Your Project Name" \
+            --scan "." \
+            --format "HTML" \
+            --out "./dependency-check-report"
+        
       - name: Upload Dependency-Check report
         uses: actions/upload-artifact@v4
         with:
@@ -37,4 +44,6 @@ jobs:
       - name: SonarQube Scan
         uses: sonarsource/sonarcloud-github-action@v2
         with:
-          token:
+          token: ${{ secrets.SONAR_TOKEN }}
+          projectKey: your-project-key
+          organization: your-organization
