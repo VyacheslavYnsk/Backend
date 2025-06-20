@@ -1,4 +1,4 @@
-name: Dependency-Check Scan
+name: Dependency-Check and SonarQube Scan
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   pull_request:
 
 jobs:
-  dependency-check:
+  scan:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,14 +21,22 @@ jobs:
           java-version: '17'
 
       - name: Run OWASP Dependency-Check
-        uses: dependency-check/owasp-dependency-check-action@v2
+        uses: jeremylong/DependencyCheck@v2
         with:
-          scan: './'  # путь к вашему проекту, '.' — корень репозитория
+          scan: './'
           format: 'HTML'
           outputDirectory: './dependency-check-report'
 
       - name: Upload Dependency-Check report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dependency-check-report
           path: dependency-check-report/
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarcloud-github-action@v1
+        with:
+          token: ${{ secrets.SONAR_TOKEN }}
+          projectKey: your-project-key
+          organization: your-organization
+          # extraArgs: '-Dsonar.host.url=https://your-sonarqube-server.com' # если нужно
